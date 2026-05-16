@@ -92,6 +92,45 @@ docker-compose up --build -d
 | `/api/leads/:id` | DELETE | Admin | Remove a lead from system |
 | `/api/leads/export/csv` | GET | Admin | Download current leads as CSV |
 
+### 📋 API Details & Examples
+
+#### **POST /api/auth/register**
+**Body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword123",
+  "role": "Sales User"
+}
+```
+
+#### **POST /api/auth/google**
+**Body:**
+```json
+{
+  "idToken": "google_id_token_from_client"
+}
+```
+
+#### **GET /api/leads**
+**Query Params:** `page`, `limit`, `search`, `status`, `source`, `sort`
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "leads": [...],
+    "pagination": {
+      "total": 25,
+      "page": 1,
+      "limit": 10,
+      "totalPages": 3
+    }
+  }
+}
+```
+
 ## ✨ Design Principles Followed
 *   **Type Safety**: End-to-end TypeScript implementation with zero `any` usage in core logic.
 *   **Validation**: Unified validation schemas using **Zod** shared across the stack.
