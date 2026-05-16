@@ -99,4 +99,4 @@ docker-compose up --build -d
 *   **Performance**: Implemented debouncing for search and server-side pagination to ensure scalability.
 
 ---
-**Submission for MERN Stack Internship Assignment**
+
