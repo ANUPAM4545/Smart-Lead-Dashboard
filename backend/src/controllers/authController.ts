@@ -13,7 +13,7 @@ const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  role: z.enum(['Admin', 'Sales User']).optional(),
+  role: z.nativeEnum(UserRole).optional(),
 });
 
 const loginSchema = z.object({
@@ -32,12 +32,12 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(parsedBody.password, salt);
 
-  const user = await User.create({
+  const user = (await User.create({
     name: parsedBody.name,
     email: parsedBody.email,
     password: hashedPassword,
     role: parsedBody.role || UserRole.SALES,
-  }) as IUser;
+  })) as IUser;
 
   const token = generateToken(user.id, user.role);
 
