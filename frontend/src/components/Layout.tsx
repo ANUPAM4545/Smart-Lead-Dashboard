@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LogOut, LayoutDashboard, Users, Moon, Sun, Menu, ChevronLeft } from 'lucide-react';
+import { LogOut, LayoutDashboard, Users, Moon, Sun, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Layout() {
