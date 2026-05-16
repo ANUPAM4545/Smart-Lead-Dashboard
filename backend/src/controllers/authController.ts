@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import User, { IUser, UserRole } from '../models/User';
 import { generateToken } from '../utils/jwt';
 import { asyncHandler } from '../utils/asyncHandler';
 import { CustomError } from '../utils/CustomError';
@@ -36,8 +36,8 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     name: parsedBody.name,
     email: parsedBody.email,
     password: hashedPassword,
-    role: parsedBody.role || 'Sales User',
-  });
+    role: parsedBody.role || UserRole.SALES,
+  }) as IUser;
 
   const token = generateToken(user.id, user.role);
 
@@ -56,7 +56,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const parsedBody = loginSchema.parse(req.body);
 
-  const user = await User.findOne({ email: parsedBody.email });
+  const user = (await User.findOne({ email: parsedBody.email })) as IUser | null;
 
   if (!user || !(await bcrypt.compare(parsedBody.password, user.password as string))) {
     return next(new CustomError('Invalid credentials', 401));
@@ -95,15 +95,15 @@ export const googleLogin = asyncHandler(async (req: Request, res: Response, next
 
   const { sub: googleId, email, name, picture } = payload;
 
-  let user = await User.findOne({ $or: [{ googleId }, { email }] });
+  let user = (await User.findOne({ $or: [{ googleId }, { email }] })) as IUser | null;
 
   if (!user) {
-    user = await User.create({
+    user = (await User.create({
       name,
       email,
       googleId,
-      role: 'Sales User',
-    });
+      role: UserRole.SALES,
+    })) as IUser;
   } else if (!user.googleId) {
     // If user exists with email but no googleId, link them
     user.googleId = googleId;
